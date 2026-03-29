@@ -154,13 +154,28 @@ router.post('/auth/saml/callback',
     const expectedEmail = normalizeEmail(req.session.loginContext?.email);
     const authenticatedEmail = normalizeEmail(req.user?.email);
 
+    console.log('SAML callback received', {
+      expectedEmail: expectedEmail || null,
+      authenticatedEmail: authenticatedEmail || null,
+      hasSamlResponse: Boolean(req.body?.SAMLResponse),
+    });
+
     if (expectedEmail && authenticatedEmail && expectedEmail !== authenticatedEmail) {
+      console.warn('SAML callback email mismatch', {
+        expectedEmail,
+        authenticatedEmail,
+      });
       req.logout(() => {
         delete req.session.loginContext;
         res.redirect(loginErrorRedirect('Authenticated SAML user does not match the entered email'));
       });
       return;
     }
+
+    console.log('SAML callback authenticated successfully', {
+      email: authenticatedEmail || expectedEmail || null,
+      provider: req.user?.provider || 'saml',
+    });
 
     // Log SAML response for debugging
     console.log('SAML Response:', req.body.SAMLResponse);
