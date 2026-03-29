@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+</head>
+<body>
+  <h1>Welcome, <%= user.name || user.email || user.username || 'User' %>!</h1>
+  <p>Login method: <%= user.provider ? user.provider.toUpperCase() : 'UNKNOWN' %></p>
+  <% if (user.email) { %>
+    <p>Email: <%= user.email %></p>
+  <% } %>
+  <% if (!user.email && user.username) { %>
+    <p>Username: <%= user.username %></p>
+  <% } %>
+  <a href="/logout">Logout</a>
+</body>
+</html>
