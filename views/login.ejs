@@ -1,21 +1,426 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Login</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In | Entra Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    html, body, #root {
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(99, 102, 241, 0.18), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.16), transparent 28%),
+        linear-gradient(145deg, #08111f 0%, #10243b 48%, #0c1728 100%);
+    }
+
+    .no-js-shell {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      color: #e2e8f0;
+    }
+
+    .no-js-card {
+      width: 100%;
+      max-width: 460px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 24px;
+      padding: 28px;
+      box-sizing: border-box;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 24px 70px rgba(2, 6, 23, 0.38);
+    }
+
+    .no-js-card h1,
+    .no-js-card p {
+      margin: 0 0 16px;
+    }
+
+    .no-js-card label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .no-js-card input {
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      font: inherit;
+    }
+
+    .no-js-card button {
+      width: 100%;
+      border: 0;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font: inherit;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #0ea5e9);
+      cursor: pointer;
+    }
+
+    .no-js-alert {
+      margin-bottom: 16px;
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: rgba(127, 29, 29, 0.35);
+      border: 1px solid rgba(248, 113, 113, 0.3);
+    }
+  </style>
 </head>
 <body>
-  <h1>Login</h1>
-  <% if (error) { %>
-    <p style="color:red"><%= error %></p>
-  <% } %>
-  <form action="/auth/start" method="post">
-    <label for="email">Work email</label>
-    <input id="email" name="email" type="email" placeholder="name@company.com" required />
-    <button type="submit">Continue with SSO</button>
-  </form>
-  <% if (!oidcConfigured) { %>
-    <p>OIDC routing will stay unavailable until <code>OIDC_CLIENT_ID</code> and <code>OIDC_CLIENT_SECRET</code> are configured.</p>
-  <% } %>
-  <p>The app chooses SAML or OIDC only from the email domain rules in <code>config.js</code>.</p>
+  <div id="root">
+    <noscript>
+      <div class="no-js-shell">
+        <div class="no-js-card">
+          <h1>Sign in</h1>
+          <p>Use your work email to continue with SSO.</p>
+          <% if (error) { %>
+            <div class="no-js-alert"><%= error %></div>
+          <% } %>
+          <form action="/auth/start" method="post">
+            <label for="email">Work email</label>
+            <input id="email" name="email" type="email" placeholder="name@company.com" required />
+            <button type="submit">Continue with SSO</button>
+          </form>
+        </div>
+      </div>
+    </noscript>
+  </div>
+
+  <script>
+    window.__LOGIN_PAGE_DATA__ = <%- JSON.stringify({ error: error || null, oidcConfigured }) %>;
+  </script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/@emotion/react@11/dist/emotion-react.umd.min.js"></script>
+  <script crossorigin src="https://unpkg.com/@emotion/styled@11/dist/emotion-styled.umd.min.js"></script>
+  <script crossorigin src="https://unpkg.com/@mui/material@5/umd/material-ui.production.min.js"></script>
+  <script>
+    (function () {
+      const data = window.__LOGIN_PAGE_DATA__ || {};
+      const React = window.React;
+      const ReactDOM = window.ReactDOM;
+      const MaterialUI = window.MaterialUI;
+
+      if (!React || !ReactDOM || !MaterialUI) {
+        return;
+      }
+
+      const h = React.createElement;
+      const {
+        Alert,
+        Avatar,
+        Box,
+        Button,
+        Chip,
+        Container,
+        CssBaseline,
+        Paper,
+        Stack,
+        TextField,
+        ThemeProvider,
+        Typography,
+        createTheme,
+      } = MaterialUI;
+
+      const theme = createTheme({
+        palette: {
+          mode: 'dark',
+          primary: {
+            main: '#38bdf8',
+          },
+          secondary: {
+            main: '#818cf8',
+          },
+          background: {
+            default: '#08111f',
+            paper: 'rgba(15, 23, 42, 0.78)',
+          },
+          success: {
+            main: '#10b981',
+          },
+          warning: {
+            main: '#f59e0b',
+          },
+        },
+        shape: {
+          borderRadius: 20,
+        },
+        typography: {
+          fontFamily: '"Inter", system-ui, sans-serif',
+          h4: {
+            fontWeight: 800,
+            letterSpacing: '-0.03em',
+          },
+          button: {
+            textTransform: 'none',
+            fontWeight: 700,
+          },
+        },
+        components: {
+          MuiPaper: {
+            styleOverrides: {
+              root: {
+                backgroundImage: 'none',
+              },
+            },
+          },
+          MuiOutlinedInput: {
+            styleOverrides: {
+              root: {
+                borderRadius: 16,
+              },
+            },
+          },
+          MuiButton: {
+            styleOverrides: {
+              root: {
+                borderRadius: 16,
+                paddingTop: 14,
+                paddingBottom: 14,
+                boxShadow: 'none',
+              },
+            },
+          },
+          MuiChip: {
+            styleOverrides: {
+              root: {
+                borderRadius: 999,
+                fontWeight: 600,
+              },
+            },
+          },
+        },
+      });
+
+      function App() {
+        return h(
+          ThemeProvider,
+          { theme: theme },
+          h(CssBaseline),
+          h(
+            Box,
+            {
+              sx: {
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                py: { xs: 4, sm: 6 },
+              },
+            },
+            h(
+              Container,
+              { maxWidth: 'sm' },
+              h(
+                Paper,
+                {
+                  elevation: 0,
+                  sx: {
+                    position: 'relative',
+                    overflow: 'hidden',
+                    border: '1px solid rgba(148, 163, 184, 0.18)',
+                    background: 'rgba(15, 23, 42, 0.72)',
+                    backdropFilter: 'blur(16px)',
+                    boxShadow: '0 30px 80px rgba(2, 6, 23, 0.38)',
+                    p: { xs: 2.5, sm: 4 },
+                  },
+                },
+                h(Box, {
+                  sx: {
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'radial-gradient(circle at top right, rgba(56, 189, 248, 0.18), transparent 26%)',
+                    pointerEvents: 'none',
+                  },
+                }),
+                h(
+                  Stack,
+                  {
+                    spacing: 3,
+                    sx: { position: 'relative' },
+                  },
+                  h(
+                    Stack,
+                    {
+                      direction: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      spacing: 2,
+                    },
+                    h(
+                      Box,
+                      null,
+                      h(
+                        Typography,
+                        {
+                          variant: 'overline',
+                          sx: {
+                            color: 'rgba(191, 219, 254, 0.9)',
+                            letterSpacing: '0.22em',
+                            fontWeight: 700,
+                          },
+                        },
+                        'Microsoft Entra Demo'
+                      ),
+                      h(
+                        Typography,
+                        {
+                          variant: 'h4',
+                          sx: { mt: 1 },
+                        },
+                        'Sign in'
+                      ),
+                      h(
+                        Typography,
+                        {
+                          variant: 'body1',
+                          sx: {
+                            mt: 1,
+                            color: 'rgba(226, 232, 240, 0.78)',
+                            lineHeight: 1.7,
+                          },
+                        },
+                        'Use your work email to continue with single sign-on.'
+                      )
+                    ),
+                    h(
+                      Avatar,
+                      {
+                        sx: {
+                          width: 56,
+                          height: 56,
+                          bgcolor: 'rgba(56, 189, 248, 0.18)',
+                          color: '#e0f2fe',
+                          border: '1px solid rgba(125, 211, 252, 0.25)',
+                          fontWeight: 800,
+                        },
+                      },
+                      'SSO'
+                    )
+                  ),
+                  h(
+                    Stack,
+                    {
+                      direction: 'row',
+                      spacing: 1,
+                      useFlexGap: true,
+                      flexWrap: 'wrap',
+                    },
+                    h(Chip, { label: 'Email domain routing', color: 'secondary', variant: 'outlined' }),
+                    h(Chip, { label: 'SAML', color: 'primary', variant: 'outlined' }),
+                    h(Chip, { label: 'OIDC', color: 'primary', variant: 'outlined' })
+                  ),
+                  data.error
+                    ? h(Alert, { severity: 'error', variant: 'filled' }, data.error)
+                    : null,
+                  h(
+                    Box,
+                    {
+                      component: 'form',
+                      action: '/auth/start',
+                      method: 'post',
+                    },
+                    h(
+                      Stack,
+                      { spacing: 2.5 },
+                      h(TextField, {
+                        id: 'email',
+                        name: 'email',
+                        type: 'email',
+                        label: 'Work email',
+                        placeholder: 'name@company.com',
+                        required: true,
+                        autoFocus: true,
+                        fullWidth: true,
+                        autoComplete: 'email',
+                        InputLabelProps: { shrink: true },
+                        sx: {
+                          '& .MuiOutlinedInput-root': {
+                            backgroundColor: 'rgba(248, 250, 252, 0.96)',
+                            color: '#0f172a',
+                          },
+                        },
+                      }),
+                      h(
+                        Button,
+                        {
+                          type: 'submit',
+                          variant: 'contained',
+                          size: 'large',
+                          fullWidth: true,
+                          sx: {
+                            background: 'linear-gradient(135deg, #2563eb, #0ea5e9)',
+                          },
+                        },
+                        'Continue with SSO'
+                      )
+                    )
+                  ),
+                  h(
+                    Paper,
+                    {
+                      variant: 'outlined',
+                      sx: {
+                        p: 2,
+                        borderRadius: 4,
+                        borderColor: 'rgba(148, 163, 184, 0.18)',
+                        backgroundColor: 'rgba(15, 23, 42, 0.45)',
+                      },
+                    },
+                    h(
+                      Typography,
+                      {
+                        variant: 'subtitle2',
+                        sx: { color: '#f8fafc', fontWeight: 700, mb: 0.75 },
+                      },
+                      'How this works'
+                    ),
+                    h(
+                      Typography,
+                      {
+                        variant: 'body2',
+                        sx: { color: 'rgba(226, 232, 240, 0.72)', lineHeight: 1.7 },
+                      },
+                      'This app selects the sign-in protocol from the email domain rules configured in config.js.'
+                    )
+                  ),
+                  data.oidcConfigured
+                    ? h(
+                        Alert,
+                        { severity: 'success', variant: 'outlined' },
+                        'OIDC routing is available for domains that are configured to use it.'
+                      )
+                    : h(
+                        Alert,
+                        { severity: 'warning', variant: 'outlined' },
+                        'OIDC routing stays unavailable until OIDC_CLIENT_ID and OIDC_CLIENT_SECRET are configured.'
+                      )
+                )
+              )
+            )
+          )
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById('root')).render(h(App));
+    })();
+  </script>
 </body>
 </html>

@@ -1,37 +1,47 @@
 module.exports = {
   saml: {
-    entryPoint: process.env.SAML_ENTRY_POINT || "https://login.microsoftonline.com/common/saml2",
-    issuer: process.env.SAML_ISSUER || "urn:nodejs-saml-app2",
-    callbackUrl: process.env.SAML_CALLBACK_URL || "http://localhost:3000/auth/saml/callback",
-    cert: process.env.SAML_CERT || `-----BEGIN CERTIFICATE-----
-            MIIC8DCCAdigAwIBAgIQZ5Iw1NnbortJRaDAfG4uRTANBgkqhkiG9w0BAQsFADA0MTIwMAYDVQQD
-            EylNaWNyb3NvZnQgQXp1cmUgRmVkZXJhdGVkIFNTTyBDZXJ0aWZpY2F0ZTAeFw0yNjAzMjcxMjQ0
-            MTNaFw0yOTAzMjcxMjQ0MTNaMDQxMjAwBgNVBAMTKU1pY3Jvc29mdCBBenVyZSBGZWRlcmF0ZWQg
-            U1NPIENlcnRpZmljYXRlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5vtW+R4HE5fg
-            +hrMjMo0SHkqoc/3VFTRh/IEBBIXRuAm2Oj+djMbaOlpC9U7szfZ3jG3sF/RxqkQlRyNtQZ/QwLr
-            TlY8fuh+tDGvoC4GLHRAY1gwnwtLRR4heKxgsAoptZG8b8lslZTAasuGQR6qnKLeHw6F9Q3lUw6+
-            KjawSMy3txy85G3fbGoun38N/1Dyo0AfSd2Bc3y0oH7ASK/U2deX1pkxW7MPK89VnZ4aZu7/mayr
-            OrAmaXSg6IHVDD6yf5byZhjqFm5aQ11dxscCX9s7BFq98dFIhae9uCxlFDMpbh9tSgeUDV1MeVeW
-            IMoYmbfm4kFmzRUwlEsg2Sz8AQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQBiXBJRkC64j9rvX6rN
-            uslvQTTPdKGGmQGyaBcngyniiTYHNnqJK/c/gAahmd5GObDWLA09cDavpqJyiP+7sFW/eYv2yWe0
-            biSv361W5nIkp9KLD2LEUXdWpocD0Me9ODLchc0YnrfjpOmUCGum9lg0olGlyVqF1COSp8m8RulP
-            nAlVTwCDbv3CNOzMM7fjzlHoCN+jrCz0ywZbPZ1144nx41JmPqEFui9lrvGl6hR+o1e07/6TOkIL
-            EUB28vbun7mWKsdQLmHb1LxiHb/FG0yIc/rm1ZqEmeRfHs89hy7mlZVjzKOnk2j+E1+GGh4ZYkpl
-            5mHZSK+bIAvxSRQ5fTPf
+    entryPoint:
+      process.env.SAML_ENTRY_POINT ||
+      "https://login.microsoftonline.com/common/saml2",
+    issuer: process.env.SAML_ISSUER || "Saml-Test-App",
+    callbackUrl:
+      process.env.SAML_CALLBACK_URL ||
+      "https://microsoft-entra-demo2.vercel.app/auth/saml/callback",
+    cert:
+      process.env.SAML_CERT ||
+      `-----BEGIN CERTIFICATE-----
+            MIIC8DCCAdigAwIBAgIQLArc30yy7bJFNbuqxZZm/DANBgkqhkiG9w0BAQsFADA0MTIwMAYDVQQD
+            EylNaWNyb3NvZnQgQXp1cmUgRmVkZXJhdGVkIFNTTyBDZXJ0aWZpY2F0ZTAeFw0yNjAzMjcwNTMz
+            MzFaFw0yOTAzMjcwNTMzMzVaMDQxMjAwBgNVBAMTKU1pY3Jvc29mdCBBenVyZSBGZWRlcmF0ZWQg
+            U1NPIENlcnRpZmljYXRlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8p6b37f/ST8U
+            ZdjqkM8EDDGu8bHwxlnjitIB8f22BfFkyrh4LUm5PsN/tBfxj8GYWCwThS8WtgTnbK2gZtA71PKe
+            IC3AO5g+8u07Xo7q0JljzBwzq/dPOT+UK/qe2sPPHtBj6r0wG/5IHwtfOBpmsrKalIW6JH2wx/5z
+            REcxrbX3SQDSCHjXSp/VnshYXIDaPlypuxw5FqWlKmeQgGu63KAXRka6MUKmy2X28mk9Nvw9jotP
+            Xu70Ud8iljM/wmFxisvTWaGxX5bRxaTXo+uHE7Po+i96j0MSw9RI/QVFVw7iPidGwlVI4IHwtWkc
+            iQpxLH1e94yOEFvShIC+r4f4vQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQA1jEMwDKj2AcK9jlPQ
+            TMes+MKgj6VOok9VTOKSy5DbWwOCKenB7140IvdK2gHlt4DE7hfNofy8lWvbiuPghSmPUq5rvjLd
+            6Z06zMOQGDC2sFv2l3p910EhtV/ETVORSc48B2ujw8RYkcGuUlt1HJeK4lK9YJs12TqW9eLbivuc
+            6+nMlkQHCodxu233hKr6QeT62+/eP1yMWg/dOA8iAcYMxcLDqvqEnsBmOSLQH9ShWcyUQSbInB/O
+            4CskxBRlDihX6XtMd9mmIiEqdmA1Nw9+FMrM9fd2QAns9PmPKahmTwaYrINpuT5HIgzJL+GoD+uT
+            xe5E5rIfiqDo9HZUy6US
             -----END CERTIFICATE-----
             `,
     identifierFormat: null,
     disableRequestedAuthnContext: true,
-    users: [
-      "murali.v1@murali80devopsgmail.onmicrosoft.com"
-    ],
+    users: ["murali.v@labtech24.in"],
   },
   oidc: {
-    discoveryUrl: process.env.OIDC_DISCOVERY_URL || "https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration",
+    discoveryUrl:
+      process.env.OIDC_DISCOVERY_URL ||
+      "https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration",
     clientId: process.env.OIDC_CLIENT_ID || "",
     clientSecret: process.env.OIDC_CLIENT_SECRET || "",
-    redirectUri: process.env.OIDC_REDIRECT_URI || "http://localhost:3000/auth/oidc/callback",
-    postLogoutRedirectUri: process.env.OIDC_POST_LOGOUT_REDIRECT_URI || "http://localhost:3000/login",
+    redirectUri:
+      process.env.OIDC_REDIRECT_URI ||
+      "http://localhost:3000/auth/oidc/callback",
+    postLogoutRedirectUri:
+      process.env.OIDC_POST_LOGOUT_REDIRECT_URI ||
+      "http://localhost:3000/login",
     scope: process.env.OIDC_SCOPE || "openid profile email",
   },
   ssoRouting: {

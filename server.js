@@ -21,6 +21,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(morgan('dev'));
 
+app.get('/', (req, res) => {
+  res.redirect('/login');
+});
+
 app.use('/', authRoutes);
 
 app.get('/dashboard', (req, res) => {

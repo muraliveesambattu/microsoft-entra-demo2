@@ -28,12 +28,31 @@ function getDomainFromEmail(email) {
   return domain || '';
 }
 
+const configuredSamlUsers = new Set(
+  Array.isArray(config.saml?.users)
+    ? config.saml.users.map(normalizeEmail).filter(Boolean)
+    : []
+);
+
+function isConfiguredSamlUser(email) {
+  return configuredSamlUsers.has(normalizeEmail(email));
+}
+
 function resolveSsoRouting(email) {
   const normalizedEmail = normalizeEmail(email);
   const domain = getDomainFromEmail(normalizedEmail);
 
   if (!normalizedEmail || !domain) {
     throw new Error('Enter a valid work email address');
+  }
+
+  if (isConfiguredSamlUser(normalizedEmail)) {
+    return {
+      email: normalizedEmail,
+      domain,
+      protocol: 'saml',
+      domainHint: domain,
+    };
   }
 
   const domainRule = config.ssoRouting.domains[domain] || null;
@@ -45,6 +64,10 @@ function resolveSsoRouting(email) {
 
   if (!['saml', 'oidc'].includes(protocol)) {
     throw new Error(`Unsupported SSO protocol configured for ${domain}`);
+  }
+
+  if (protocol === 'saml' && configuredSamlUsers.size > 0 && !isConfiguredSamlUser(normalizedEmail)) {
+    throw new Error('This email is not allowed to sign in with SAML');
   }
 
   return {
@@ -79,6 +102,11 @@ passport.use(new SamlStrategy(
     if (!email) {
       return done(new Error('No email found in SAML assertion'));
     }
+
+    if (configuredSamlUsers.size > 0 && !isConfiguredSamlUser(email)) {
+      return done(new Error('This email is not allowed to sign in with SAML'));
+    }
+
     const user = findOrCreateSamlUser(email, name);
     return done(null, user);
   }
@@ -123,6 +151,17 @@ router.post('/auth/saml/start', passport.authenticate('saml', { failureRedirect:
 router.post('/auth/saml/callback',
   passport.authenticate('saml', { failureRedirect: loginErrorRedirect('SAML login failed') }),
   (req, res) => {
+    const expectedEmail = normalizeEmail(req.session.loginContext?.email);
+    const authenticatedEmail = normalizeEmail(req.user?.email);
+
+    if (expectedEmail && authenticatedEmail && expectedEmail !== authenticatedEmail) {
+      req.logout(() => {
+        delete req.session.loginContext;
+        res.redirect(loginErrorRedirect('Authenticated SAML user does not match the entered email'));
+      });
+      return;
+    }
+
     // Log SAML response for debugging
     console.log('SAML Response:', req.body.SAMLResponse);
     delete req.session.loginContext;
