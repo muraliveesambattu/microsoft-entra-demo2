@@ -13,7 +13,7 @@ function normalizePem(value) {
 module.exports = {
   saml: {
     entryPoint:
-      "https://login.microsoftonline.com/common/saml2",
+      "https://login.microsoftonline.com/2c761afb-5a70-452a-ab62-b98b90a6e556/saml2",
     issuer: process.env.SAML_ISSUER || "Saml-Demo-App",
     callbackUrl:
       "https://microsoft-entra-demo2.vercel.app/auth/saml/callback",
