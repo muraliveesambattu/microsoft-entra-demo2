@@ -1,34 +1,44 @@
+function normalizePem(value) {
+  const normalized = String(value || '')
+    .replace(/\\n/g, '\n')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .join('\n')
+    .trim();
+
+  return normalized ? `${normalized}\n` : '';
+}
+
 module.exports = {
   saml: {
     entryPoint:
-   
       "https://login.microsoftonline.com/common/saml2",
-    issuer: process.env.SAML_ISSUER || "Saml-Test-App",
+    issuer: process.env.SAML_ISSUER || "Saml-Demo-App",
     callbackUrl:
-  
       "https://microsoft-entra-demo2.vercel.app/auth/saml/callback",
-    cert:
+    cert: normalizePem(
       process.env.SAML_CERT ||
       `-----BEGIN CERTIFICATE-----
-            MIIC8DCCAdigAwIBAgIQLArc30yy7bJFNbuqxZZm/DANBgkqhkiG9w0BAQsFADA0MTIwMAYDVQQD
-            EylNaWNyb3NvZnQgQXp1cmUgRmVkZXJhdGVkIFNTTyBDZXJ0aWZpY2F0ZTAeFw0yNjAzMjcwNTMz
-            MzFaFw0yOTAzMjcwNTMzMzVaMDQxMjAwBgNVBAMTKU1pY3Jvc29mdCBBenVyZSBGZWRlcmF0ZWQg
-            U1NPIENlcnRpZmljYXRlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8p6b37f/ST8U
-            ZdjqkM8EDDGu8bHwxlnjitIB8f22BfFkyrh4LUm5PsN/tBfxj8GYWCwThS8WtgTnbK2gZtA71PKe
-            IC3AO5g+8u07Xo7q0JljzBwzq/dPOT+UK/qe2sPPHtBj6r0wG/5IHwtfOBpmsrKalIW6JH2wx/5z
-            REcxrbX3SQDSCHjXSp/VnshYXIDaPlypuxw5FqWlKmeQgGu63KAXRka6MUKmy2X28mk9Nvw9jotP
-            Xu70Ud8iljM/wmFxisvTWaGxX5bRxaTXo+uHE7Po+i96j0MSw9RI/QVFVw7iPidGwlVI4IHwtWkc
-            iQpxLH1e94yOEFvShIC+r4f4vQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQA1jEMwDKj2AcK9jlPQ
-            TMes+MKgj6VOok9VTOKSy5DbWwOCKenB7140IvdK2gHlt4DE7hfNofy8lWvbiuPghSmPUq5rvjLd
-            6Z06zMOQGDC2sFv2l3p910EhtV/ETVORSc48B2ujw8RYkcGuUlt1HJeK4lK9YJs12TqW9eLbivuc
-            6+nMlkQHCodxu233hKr6QeT62+/eP1yMWg/dOA8iAcYMxcLDqvqEnsBmOSLQH9ShWcyUQSbInB/O
-            4CskxBRlDihX6XtMd9mmIiEqdmA1Nw9+FMrM9fd2QAns9PmPKahmTwaYrINpuT5HIgzJL+GoD+uT
-            xe5E5rIfiqDo9HZUy6US
-            -----END CERTIFICATE-----
-            `,
+MIIC8DCCAdigAwIBAgIQLRBkL6knIaJL/uRngoK1ojANBgkqhkiG9w0BAQsFADA0MTIwMAYDVQQD
+EylNaWNyb3NvZnQgQXp1cmUgRmVkZXJhdGVkIFNTTyBDZXJ0aWZpY2F0ZTAeFw0yNjAzMjkxMzE2
+NTlaFw0yOTAzMjkxMzE2NTlaMDQxMjAwBgNVBAMTKU1pY3Jvc29mdCBBenVyZSBGZWRlcmF0ZWQg
+U1NPIENlcnRpZmljYXRlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyvNa/y6svLxk
+UI1kCwTjpM2fn0l4XfTC9VhQwuxxnoZS2iLx4yISMxju258uSJlPIqDAQkKwy1js5liKystLdmMd
+B+3N3b0hBqJnvqkK4mObq7OjSN8nOWuMJecvELp9ymOet0BujP10nyqa02RNU7sxEs0MjPmppQ11
+wn9m3xXbDuH11/wDhor9x4adx9qpUrNav8pnCrxoyyE5ZFTNOsbwlULdP9gmmABH7L9yfz8limax
+kHFe38TEX+89ldV23J59bz1jKhctWX4Lumgg9/7TJ1vc8UziIFCz+OjRK9OBIk2HIREGMlDFVIK0
+oKCxuud39Qsr/ydGcV6CiklPHQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQCOmVITAN7oKoDawSgK
+qzBJw/TMneCCjR5WFsyQlLF/WT149mMpmjHEPs/rHqxmw3Soa4hl+NUbHD7RDIEVlSCm98eo0oOE
+eLk6hE5nLkXQoCfeAbdCdkHltDg1cLGFaBxhrTrCUesUnf6ppe7Ft1lr39/8tKPRK+weUAj4SqEm
+RxDF2JoYPk6zXzzsxBu1yDp4j3DJKkad31NJouCKL95nZc5K0c93DJELP0CdoNn9jPC4tqP8kXP2
+/RWcXFZYqM6H6myD4Ay93mWBeTxBMEk9qIBohmzpsRRTp7HOgOdiPOZKLbMm5zXN0lkdD82rCEhr
+NDcyu1qdWgZ8vHzFPrOv
+-----END CERTIFICATE-----`
+    ),
     identifierFormat: null,
     disableRequestedAuthnContext: true,
-    users: ["murali.v@labtech24.in"],
+    users: ["murali80.devops@gmail.com"],
   },
   oidc: {
     discoveryUrl:
