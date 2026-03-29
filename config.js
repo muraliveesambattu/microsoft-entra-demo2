@@ -1,11 +1,11 @@
 module.exports = {
   saml: {
     entryPoint:
-      process.env.SAML_ENTRY_POINT ||
+   
       "https://login.microsoftonline.com/common/saml2",
     issuer: process.env.SAML_ISSUER || "Saml-Test-App",
     callbackUrl:
-      process.env.SAML_CALLBACK_URL ||
+  
       "https://microsoft-entra-demo2.vercel.app/auth/saml/callback",
     cert:
       process.env.SAML_CERT ||
