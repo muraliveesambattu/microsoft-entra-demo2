@@ -120,6 +120,7 @@ router.get('/login', (req, res) => {
 });
 
 router.post('/auth/start', (req, res) => {
+  console.log('[SAML] POST Call at  /auth/start');
   try {
     const routing = resolveSsoRouting(req.body.email);
 
