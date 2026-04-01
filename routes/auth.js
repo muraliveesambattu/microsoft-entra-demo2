@@ -144,24 +144,23 @@ router.get('/auth/saml/start', passport.authenticate('saml', { failureRedirect: 
   // This will redirect to IdP
 });
 
-router.post('/auth/saml/start', passport.authenticate('saml', { failureRedirect: loginErrorRedirect('SAML login failed') }), (req, res) => {
-  // This will redirect to IdP
-});
-
 router.post('/auth/saml/callback',
   passport.authenticate('saml', { failureRedirect: loginErrorRedirect('SAML login failed') }),
   (req, res) => {
     const expectedEmail = normalizeEmail(req.session.loginContext?.email);
     const authenticatedEmail = normalizeEmail(req.user?.email);
 
-    console.log('SAML callback received', {
+    console.log('[SAML] Callback received', {
       expectedEmail: expectedEmail || null,
       authenticatedEmail: authenticatedEmail || null,
       hasSamlResponse: Boolean(req.body?.SAMLResponse),
+      sessionId: req.sessionID,
+      userAgent: req.headers['user-agent'],
+      ip: req.ip,
     });
 
     if (expectedEmail && authenticatedEmail && expectedEmail !== authenticatedEmail) {
-      console.warn('SAML callback email mismatch', {
+      console.warn('[SAML] Callback email mismatch', {
         expectedEmail,
         authenticatedEmail,
       });
@@ -172,13 +171,13 @@ router.post('/auth/saml/callback',
       return;
     }
 
-    console.log('SAML callback authenticated successfully', {
+    console.log('[SAML] Callback authenticated successfully', {
       email: authenticatedEmail || expectedEmail || null,
       provider: req.user?.provider || 'saml',
     });
 
     // Log SAML response for debugging
-    console.log('SAML Response:', req.body.SAMLResponse);
+    console.log('[SAML] SAML Response:', req.body.SAMLResponse);
     delete req.session.loginContext;
     res.redirect('/dashboard');
   }
@@ -202,11 +201,24 @@ router.get('/auth/oidc/start', async (req, res, next) => {
 });
 
 router.get('/auth/oidc/callback', async (req, res, next) => {
+  console.log('[OIDC] Callback received', {
+    query: req.query,
+    sessionId: req.sessionID,
+    userAgent: req.headers['user-agent'],
+    ip: req.ip,
+  });
   try {
     const { profile } = await completeAuthorizationCodeFlow({
       query: req.query,
       session: req.session,
       oidcConfig: config.oidc,
+    });
+
+    console.log('[OIDC] Authorization code flow completed', {
+      email: profile.email,
+      subject: profile.subject,
+      name: profile.name,
+      username: profile.username,
     });
 
     const user = findOrCreateSsoUser({
@@ -220,9 +232,10 @@ router.get('/auth/oidc/callback', async (req, res, next) => {
 
     req.login(user, (error) => {
       if (error) {
+        console.error('[OIDC] Error during req.login', error);
         return next(error);
       }
-
+      console.log('[OIDC] User logged in successfully', { userId: user.id, email: user.email });
       return res.redirect('/dashboard');
     });
   } catch (error) {
